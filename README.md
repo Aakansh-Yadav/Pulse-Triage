@@ -21,7 +21,7 @@ AI-driven smart triage and automated medical appointments. Doctor slots are **fi
 | AI | OpenAI (`gpt-4o-mini`) with a clinical rules fallback |
 | Billing | Stripe and/or Razorpay, auto-mock otherwise |
 
-Python is not required. Express is used because this machine does not have Python; the product surface matches the spec.
+The app is Node.js only. Python is not required.
 
 ## Run locally
 
@@ -36,6 +36,8 @@ npm run dev
 - App: [http://localhost:3000](http://localhost:3000)
 - API: [http://localhost:4000/health](http://localhost:4000/health)
 
+Demo accounts are created automatically the first time the API starts.
+
 ### Demo accounts
 
 | Role | Email | Password |
@@ -44,8 +46,9 @@ npm run dev
 | Patient 2 | `patient2@demo.com` | `demo1234` |
 | Doctor | `doctor@demo.com` | `demo1234` |
 | Doctor 2 | `doctor2@demo.com` | `demo1234` |
+| Staff | `staff@demo.com` | `demo1234` |
 
-Try a low-risk line such as “mild sore throat for two days”, then a high-risk line such as “crushing chest pain radiating to my left arm”. Watch the doctor board reorder.
+Try a low-risk line such as “mild sore throat for two days” — Ava keeps that case online. Then a high-risk line such as “crushing chest pain radiating to my left arm” to take the next first-come clinic slot. If another high-risk patient registered first, hospital staff stay with the waiting patient until their turn.
 
 ### PostgreSQL + Redis (recommended in production)
 
@@ -53,14 +56,14 @@ Try a low-risk line such as “mild sore throat for two days”, then a high-ris
 docker compose up -d
 ```
 
-Set in `.env`:
+Copying `.env.example` already sets these (they match `docker-compose.yml`):
 
 ```
 DATABASE_URL=postgres://pulsetriage:pulsetriage@localhost:5432/pulsetriage
 REDIS_URL=redis://localhost:6379
 ```
 
-If those services are down, the API still boots: **PGlite** (embedded Postgres) + an in-memory live queue. Same schema, same priority math.
+If those services are down, the API still boots: **PGlite** (embedded Postgres) + an in-memory live queue. Same schema, same first-come scheduling.
 
 ### OpenAI & payments
 
